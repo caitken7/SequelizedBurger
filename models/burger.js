@@ -1,20 +1,18 @@
-var orm = require("../config/orm");
-
-var burger = {
-  all: function(cb) {
-    orm.all("burgers", function(res) {
-      cb(res);
-    });
-  },
-  create: function(name, cb) {
-    orm.create("burgers", ["burger_name", "devoured"], [name, false], cb);
-  },
-  update: function(id, cb) {
-    var condition = "id=" + id;
-    orm.update("burgers", {
-      devoured: true
-    }, condition, cb);
-  }
+// Burger Model
+'use strict';
+module.exports = function(sequelize, DataTypes) {
+  var burger = sequelize.define('burger', {
+    burger_name: DataTypes.STRING,
+    devoured: DataTypes.BOOLEAN,
+    devourerId: DataTypes.INTEGER
+  }, {
+    classMethods: {
+      associate: function(models) {
+        // Each of the burgers has one of the devourers associated with it (key is stored on the devourer)
+        burger.hasOne(models.devourers)
+      }
+    }
+  });
+  return burger;
 };
 
-module.exports = burger;
