@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
     classMethods: {
       associate: function(models) {
         // Unecessary, the hasOne() function exists in the burger model
-        // devourers.belongsTo(models.burgers);
+        devourers.belongsTo(models.burgers);
       }
     }
   });

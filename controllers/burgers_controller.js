@@ -4,7 +4,7 @@
 var express = require("express");
 var router = express.Router();
 
-var models = require('../models'); // Pulls out the Burger Models
+var models = require('../models'); // All Models
 
 
 // Extracts the sequelize connection from the models object
@@ -17,20 +17,20 @@ sequelizeConnection.sync();
 // Routes
 // ----------------------------------------------------
 
-// get route -> index
+// Index Redirect
 router.get("/", function(req, res) {
   res.redirect("/burgers");
 });
 
-// get route -> index
 // Index Page
 router.get("/burgers", function(req, res) {
+  console.log("HEEREEEEE")
   // Sequelize Query to get all burgers from database (and join them to their devourers, if applicable)
-  models.burger.findAll({
-   include: [{model: models.devourers}]
+  models.burgers.findAll({
+   // include: [{model: models.devourers}]
   }).then(function(data){
     // Wrapping the array of returned burgers in a object so it can be referenced inside our handlebars
-    var hbsObject = { burger: data };
+    var hbsObject = { burgers: data };
     res.render("index", hbsObject);
   });
 });
@@ -39,7 +39,7 @@ router.get("/burgers", function(req, res) {
 // Create Burger
 router.post("/burgers/create", function(req, res) {
   // Sequelize Query to add new burger to database
-  models.burger.create(
+  models.burgers.create(
     {
       burger_name: req.body.burger_name,
       devoured: false
@@ -61,7 +61,7 @@ router.post("/burgers/create", function(req, res) {
 // });
 
 // Eat a Burger
-router.post('/burger/eat/:id', function (req, res) {
+router.post('/burgers/eat/:id', function (req, res) {
 
   // If not name was added, make it "Anonymous"
   if(req.body.burgerEater == "" || req.body.burgerEater == null){
@@ -77,7 +77,7 @@ router.post('/burger/eat/:id', function (req, res) {
   // Then, select the eaten burger by it's id
   .then(function(newDevourer){
 
-    models.burger.findOne( {where: {id: req.params.id} } )
+    models.burgers.findOne( {where: {id: req.params.id} } )
 
     // Then, use the returned burger object to...
     .then(function(eatenBurger){
@@ -88,7 +88,7 @@ router.post('/burger/eat/:id', function (req, res) {
 
       // Then, the burger is devoured, so refresh the page
       .then(function(){
-        res.redirect('/index');
+        res.redirect('/burgers');
       });
     });
   });
